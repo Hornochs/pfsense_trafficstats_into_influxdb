@@ -2,13 +2,13 @@
 import json
 import subprocess
 from datetime import datetime
-
+from pathlib import Path
 from influxdb import InfluxDBClient
 
 INTERFACES = ["igb0", "pppoe0"]
 WORKING_FOLDER = "/tmp/json"
 NOW = datetime.now()
-CLIENT = InfluxDBClient("host", "8086", "user", "pw", "firewall")
+CLIENT = InfluxDBClient('grafana.i.3fu.de', '8086', 'grafana', 'jj4bseEL66s4wSFE', 'firewall')
 
 
 # Process an interfaces.X.traffic.PERIOD dict into a pair of (previous_rx, previous_tx), (current_rx, current_tx)
@@ -21,6 +21,8 @@ def process_traffic(traffic):
 def process_iface(interface):
     day_json = f"{WORKING_FOLDER}/{interface}_d.json"
     month_json = f"{WORKING_FOLDER}/{interface}_m.json"
+    #Create Folder
+    Path(WORKING_FOLDER).mkdir(parents=True, exist_ok=True)
     # TODO: consider shlex.quote for safety
     subprocess.check_call(
         f"vnstat --json d 2 -i {interface} > {day_json}",
